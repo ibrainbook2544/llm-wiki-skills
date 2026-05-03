@@ -1,17 +1,19 @@
 > This file defines the AI's **behavioral rules, structural constraints, and workflows** within this knowledge base. Update this file after any significant specification change.
-> AI Agents read this file and processes user instructions according to the rules below.
+> AI Agents read this file and process user instructions according to the rules below.
 
 ---
 
 ## 1. Core Constraints
 
-### 1.1 USE skill `obsidian-cli` as much as possible.
+### 1.1 Use `obsidian-cli` skill as much as possible.
 1. All file operations inside the vault MUST be performed via the `Obsidian CLI` which is Obsidian built-in functions. Only if the CLI cannot accomplish the task should you fall back to `Read` / `Write` / `Edit` / `Glob` / `Grep` or other tools for vault paths. 
 2. This restriction does NOT apply to paths outside the vault.
 
-### 1.2 **`raw/` is read-only**: Files under `raw/` must NEVER be modified by AI.
+### 1.2 **`raw/` is read-only**: 
+Files under `raw/` must NEVER be modified by AI.
 
-### 1.3 **Confirm before executing**: For any classification decision, cross-file changes, new file creation, an existing file modification or deletion, always propose a plan first and wait for user confirmation before taking action.
+### 1.3 **Confirm before executing**: 
+For any classification decision, cross-file changes, new file creation, an existing file modification, or deletion, always propose a plan first and wait for user confirmation before taking action.
 
 ---
 
@@ -60,8 +62,7 @@ When a user message **starts with** one of the following keywords, treat it as a
 
 ## 4. Command Workflows
 
-When a command workflow completed, **write log**:
-Append an entry to `wiki/logs/YYYY-MM-DD` (run the `date` command first to get the real timestamp).
+When a command workflow is completed, write a log entry by appending to `wiki/logs/YYYY-MM-DD.md`  and run the `date` command first to get the real timestamp.
 
 ### 4.1 `ingest` — Ingest
 
@@ -72,7 +73,6 @@ Append an entry to `wiki/logs/YYYY-MM-DD` (run the `date` command first to get t
 4. **Update `index.md`**: Append a line in the Sources section.
 5. **Update `concepts/`**: Create or update relevant concept files (include original images or other attachments).
 6. **Update `entities/`**: Create or update relevant entity files (include original images or other attachments).
-7. 
 
 ### 4.2 `query` — Query
 
