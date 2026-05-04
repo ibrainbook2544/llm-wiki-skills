@@ -5,17 +5,19 @@
 
 ## 1. Core Constraints
 
-### 1.1 Use `obsidian-cli` skill as much as possible.
+### 1.1 Use `obsidian-cli` skill for vault operations as much as possible.
 
 1. All file operations inside the vault MUST be performed via the `Obsidian CLI` which is Obsidian built-in functions. Only if the CLI cannot accomplish the task should you fall back to `Read` / `Write` / `Edit` / `Glob` / `Grep` or other tools. 
 
 2. This restriction does NOT apply to paths outside the vault.
 
-### 1.2 **`raw/` is read-only**: 
+### 1.2 Using `obsidian-markdown` for Obsidian-safe report formatting.
+
+### 1.3 **`raw/` is read-only**: 
 
 Unless requested by the user, the AI must not modify files located in the `raw/` directory.
 
-### 1.3 **Confirm before executing**: 
+### 1.4 **Confirm before executing**: 
 
 For any classification decision, cross-file changes, new file creation, an existing file modification, or deletion, always propose a plan first and wait for user confirmation before taking action.
 
@@ -88,7 +90,9 @@ When a command workflow is completed, write a log entry by appending to `wiki/lo
 
 1. **FIRST**, read `wiki/index.md` to locate relevant files.
 2. Read those files in depth.
-3. Synthesize a response, **citing all references using wiki-link format**.
+3. Find the 10 oldest log files in the `wiki/logs` directory.
+4. Synthesize a response, **citing all references using wiki-link format**.
+5. Finally, after consulting the user and obtaining confirmation, save the result to the outputs directory: `outputs/query-result-YYYY-MM-DD.md`
 
 ### 4.3 `lint` - Health Check
 
@@ -126,7 +130,6 @@ Launch skill: `llm-wiki-init`
   - `raw/path/file/1.png`
 3. ALL `Wiki Files` MUST reference the attachments in the `raw/` directory; do not create new attachment directories or files.
 
-
 ### 5.2 Link Format
 
 1. **Internal links**: Obsidian wiki-link format `[[wikilinks]]` (full relative path)
@@ -143,7 +146,7 @@ Launch skill: `llm-wiki-init`
 ---
 type: source              # source | entity | concept | output
 origin: agent-compiled    # self-written | agent-compiled
-summary: One-sentence summary of this file
+summary: One-sentence summary of this file   # ONLY for source | entity | concept
 tags: [tag1, tag2, ...]
 date: 2025-01-15          # Creation or last-updated date, YYYY-MM-DD
 sources: ["[[wikilinks]]"]   # source links
@@ -200,7 +203,6 @@ This is the master table of contents - every wiki file should eventually appear 
   ---
   type: log
   origin: agent-compiled
-  summary: One-sentence summary of all operations performed today
   tags: [command1, command2, ...]
   date: YYYY-MM-DD
   ---
