@@ -2,7 +2,7 @@
 name: llm-wiki-init
 description: Initialize a new LLM-driven wiki knowledge base in the current Obsidian vault. Sets up the full directory structure, creates starter files, and writes the CLAUDE.md and the AGENTS.md specification that governs all future AI behavior in this vault. Use this skill whenever a user wants to set up a new knowledge base, start a wiki from scratch, or says things like "init wiki", "setup wiki", "create wiki structure", "build llm wiki", or opens a blank vault and wants AI-assisted note-taking.
 ---
-# llm-wiki-init — LLM Wiki initialization
+# llm-wiki-init - LLM Wiki initialization
 
 This skill sets up a complete LLM-driven wiki in the current working directory (the Obsidian vault root). The goal is to create a consistent structure and `CLAUDE.md` and `AGENTS.md` specification so that AI behavior is predictable and rules-governed from day one.
 
@@ -21,7 +21,7 @@ Check whether `CLAUDE.md`, `AGENTS.md`, `wiki/`, or `raw/` already exist:
 
 ## Step 2: Create directory structure
 
-Create the following placeholder files to establish the directory tree. These empty files exist solely to force directory creation — Obsidian and git need at least one file per folder.
+Create the following placeholder files to establish the directory tree. These empty files exist solely to force directory creation - Obsidian and git need at least one file per folder.
 
 - `raw/.gitkeep`
 - `wiki/concepts/.gitkeep`
@@ -41,7 +41,7 @@ date: YYYY-MM-DD
 
 # Wiki Index
 
-> All files are maintained by type. Each line is formatted as: `[[Link]] — One-sentence summary`
+> All files are maintained by type. Each line is formatted as: `[[wikilink]] - One-sentence summary`
 
 ---
 
@@ -72,7 +72,7 @@ date: YYYY-MM-DD
 
 ## Step 4: Copy AGENTS.md from template
 
-Read the full template from `references/AGENTS-template.md` (in this skill's directory) and write it as `AGENTS.md` in the vault root. This file is what governs all future AI behavior — it defines workflows, naming conventions, and rules. 
+Copy the full template from `references/AGENTS-template.md` (in this skill's directory) into `AGENTS.md` in the vault root. This file is what governs all future AI behavior - it defines workflows, naming conventions, and rules. 
 
 ## Step 5: Create CLAUDE.md
 
