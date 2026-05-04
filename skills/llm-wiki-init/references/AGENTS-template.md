@@ -5,17 +5,17 @@
 
 ## 1. Core Constraints
 
-### 1.1 Use `obsidian-cli` skill for vault operations as much as possible.
+### 1.1 Use `obsidian-cli` skill for vault operations.
 
 1. All file operations inside the vault MUST be performed via the `Obsidian CLI` which is Obsidian built-in functions. Only if the CLI cannot accomplish the task should you fall back to `Read` / `Write` / `Edit` / `Glob` / `Grep` or other tools. 
 
 2. This restriction does NOT apply to paths outside the vault.
 
-### 1.2 Using `obsidian-markdown` for Obsidian-safe report formatting.
+### 1.2 Using `obsidian-markdown` skill for Obsidian-safe report formatting.
 
 ### 1.3 **`raw/` is read-only**: 
 
-Unless requested by the user, the AI must not modify files located in the `raw/` directory.
+Unless requested by the user, AI must not modify files located in the `raw/` directory.
 
 ### 1.4 **Confirm before executing**: 
 
@@ -41,40 +41,38 @@ vault-root/
 
 ### 2.1 Directory Notes
 
-1. **`raw/`** may contain multiple sub-levels for organization.
+1. `raw/` may contain multiple sub-levels (subdirectories, subfolders) for organization.
 
-2. **`wiki/sources/`** mirrors the path structure of `raw/` exactly EXCEPT FOR all attachments, e.g.:
+2. `wiki/sources/` mirrors the path structure of `raw/` exactly (EXCEPT FOR all `attachment folders`): `raw/FOLDER/FILE.docx` → `wiki/sources/FOLDER/FILE.md`
 
-  > `raw/path/file.docx` → `wiki/sources/path/file.md`
-
-3. All attachments are kept in only `raw/` directory; all other files reference the attachments located there.
+3. All attachments referenced in `raw/` and `wiki/` files are located exclusively `attachment folders` in `raw/` directory.
 
 ---
 
 ## 3. Structured Command Reference
 
-When a user message **starts with** one of the following keywords, treat it as a **structured command** and execute immediately - do not interpret it as natural language.
+When a user message **starts with** one of the following keywords, treat it as a **structured command**.
 
 | Structured Command  | Syntax                    | Triggers Workflow                                              |
-| -------- | ------------------------- | -------------------------------------------------------------- |
-| `ingest` | `ingest [file path(s)...]` | Ingest new raw source material                                |
-| `query`  | `query <topic>`            | Answer comprehensively based on the Wiki                      |
-| `lint`   | `lint`                     | Knowledge base health check                                   |
-| `init`   | `init`                     | Initialize the knowledge base                                 |
+| -------- | -------------------------- | -------------------------------------------------------------- |
+| `ingest` | `ingest [FILE PATH(s)...]` | Ingest new raw source material or update existing one          |
+| `query`  | `query <topic>`            | Answer comprehensively based on the Wiki                       |
+| `lint`   | `lint`                     | Knowledge base health check                                    |
+| `init`   | `init`                     | Initialize the knowledge base                                  |
 
-### 3.1 Path Rules (applies to `ingest`)
+### 3.1 File Path Rules (applies to `ingest`)
 
 1. Paths are relative to `raw/` and support arbitrary sub-directory depth.
 
-2. Separate multiple files with spaces: `ingest a.docx folder/b.docx folder/subfolder/c.docx`
+2. Separate multiple files with spaces: `ingest FILE.docx FOLDER/FILE.docx FOLDER/SUBFOLDER/FILE.docx`
 
-3. **No-argument auto-scan** (ONLY `ingest`): Recursively scans `raw/**/*`, excluding attachments. Compares against `wiki/sources/` and lists unprocessed files.
+3. **No-argument auto-scan** (ONLY `ingest`): Recursively scan `raw/` directory and all its subdirectories, excluding all attachment directories. Compares against `wiki/sources/` and lists unprocessed files.
 
 ---
 
 ## 4. Command Workflows
 
-When a command workflow is completed, write a log entry by appending to `wiki/logs/log-YYYY-MM-DD.md`  and run the `date` command first to get the real timestamp.
+When a command workflow is completed, write a log entry by appending to `wiki/logs/log-YYYY-MM-DD.md` (see 5.5).
 
 ### 4.1 `ingest` - Ingest
 
@@ -90,7 +88,7 @@ When a command workflow is completed, write a log entry by appending to `wiki/lo
 
 1. **FIRST**, read `wiki/index.md` to locate relevant files.
 2. Read those files in depth.
-3. Find the 10 oldest log files in the `wiki/logs` directory.
+3. Find the 10 oldest log files in the `wiki/logs/` directory.
 4. Synthesize a response, **citing all references using wiki-link format**.
 5. Finally, after consulting the user and obtaining confirmation, save the result to the outputs directory: `outputs/query-result-YYYY-MM-DD.md`
 
@@ -111,30 +109,15 @@ When a command workflow is completed, write a log entry by appending to `wiki/lo
 
 ### 4.4 `init` - Initialize
 
-Launch skill: `llm-wiki-init`
+Launch `llm-wiki-init` skill.
 
 ---
 
 ## 5. File Specifications
 
+### 5.1 `Wiki Files`: files in `sources/`, `entities/`, `concepts/`, `outputs/`
 
-`Wiki Files`: files in `/sources`, `/entities`, `/concepts`, `/outputs`
-
-`Operational Files`: index, log, CLAUDE, AGENTS
-
-
-### 5.1 `docx`, `PDF` and their attachments
-
-1. AI automatically to convert: `raw/path/file.docx` to `raw/path/file.md`. After conversion, check if the attachments are broken links. If so, try to fix it.
-2. Save attachments in a sibling subdirectory and use the filename (prefix only, excluding the extension) as the directory name. 
-  - `raw/path/file/1.png`
-3. ALL `Wiki Files` MUST reference the attachments in the `raw/` directory; do not create new attachment directories or files.
-
-### 5.2 Link Format
-
-1. **Internal links**: Obsidian wiki-link format `[[wikilinks]]` (full relative path)
-2. **External links**: Standard Markdown `[text](url)`
-3. **Do not use backticks for any links, except for UNRESOLED link.**
+### 5.2 `Operational Files`: index, CLAUDE, AGENTS and logs 
 
 ### 5.3 Wiki File Format
 
@@ -212,3 +195,10 @@ This is the master table of contents - every wiki file should eventually appear 
 
   ---
   ```
+
+### 5.6 `docx`, `PDF`
+
+1. AI automatically to convert: `raw/PATH/FILE.docx` to `raw/PATH/FILE.md`. After conversion, check if the attachments are broken links. If so, try to fix it.
+2. Save attachments in a sibling subdirectory and use the filename (prefix only, excluding the extension) as the directory name. 
+  - `raw/PATH/FILE/1.png`
+3. ALL `Wiki Files` MUST reference the attachments in the `raw/` directory; do not create new attachment directories or files.
