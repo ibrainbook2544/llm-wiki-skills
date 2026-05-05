@@ -16,19 +16,17 @@ Check whether `CLAUDE.md`, `AGENTS.md`, `wiki/`, or `raw/` already exist:
 
 - **All absent** → proceed directly
 - **Any present** → warn the user:
-  > ⚠️ Detected existing wiki structure. Continuing will overwrite `CLAUDE.md`, `AGENTS.md`, `wiki/index.md`. Other existing files will NOT be affected. Continue?
+  > Detected existing wiki structure. Continuing will overwrite `CLAUDE.md`, `AGENTS.md`, `wiki/index.md`. Other existing files will NOT be affected. Continue?
 - Wait for confirmation before proceeding.
 
 ## Step 2: Create directory structure
 
-Create the following placeholder files to establish the directory tree. These empty files exist solely to force directory creation - Obsidian and git need at least one file per folder.
-
-- `raw/.gitkeep`
-- `wiki/concepts/.gitkeep`
-- `wiki/entities/.gitkeep`
-- `wiki/sources/.gitkeep`
-- `wiki/outputs/.gitkeep`
-- `wiki/logs/.gitkeep`
+- `raw/`
+- `wiki/concepts/`
+- `wiki/entities/`
+- `wiki/sources/`
+- `wiki/outputs/`
+- `wiki/logs/`
 
 ## Step 3: Create wiki/index.md
 
@@ -72,7 +70,7 @@ date: YYYY-MM-DD
 
 ## Step 4: Copy AGENTS.md from template
 
-Copy the full template from `references/AGENTS-template.md` (in this skill's directory) into `AGENTS.md` in the vault root. This file is what governs all future AI behavior - it defines workflows, naming conventions, and rules. 
+Use shell commands to copy the full template ffile `references/AGENTS-template.md` (in this skill's directory) into `AGENTS.md`. This file is what governs all future AI behavior - it defines workflows, naming conventions, and rules. 
 
 ## Step 5: Create CLAUDE.md
 

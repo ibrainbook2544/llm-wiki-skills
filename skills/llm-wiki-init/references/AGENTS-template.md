@@ -76,13 +76,17 @@ When a command workflow is completed, write a log entry by appending to `wiki/lo
 
 ### 4.1 `ingest` - Ingest
 
-1. According to **Path Rules**, ingest each file.
-2. **Co-read confirmation**: Read the source in full, then confirm core takeaways with the user via Q&A.
-3. **Create or update the sources file** at path `wiki/sources/<same relative path as raw>/<original filename>.md`
+1. According to `Path Rules`, ingest each file.
+2. Co-read confirmation: Read the source in full, then confirm core takeaways with the user via Q&A.
+3. Create or update the sources file at path `wiki/sources/<same relative path as raw>/<original filename>.md`:
+
    - Content includes: summary, reference to original, knowledge map (tree outline), key points, attachments, and related links. 
-4. **Update `index.md`**: Append a line in the `Sources` section.
-5. **Update `concepts/`**: Create or update relevant concept files (include attachments).
-6. **Update `entities/`**: Create or update relevant entity files (include attachments).
+
+4. Update `index.md`: Append a line in the `Sources` section.
+5. Update `concepts/` and `entities/`: 
+
+   - Create or update relevant concept and entiy files.
+   - Add `Relevant Links` and attach the reasons for their association: [[wiki/concepts/demo]] - One-sentence reason
 
 ### 4.2 `query` - Query
 
@@ -171,7 +175,7 @@ This is the master table of contents - every wiki file should eventually appear 
 
 ### 5.5 Log File Format
 
-1. **⚠️ Critical**: All log files **must begin with a YAML frontmatter block** (see 5.3), otherwise they do not conform to the file specification.
+1. **Critical**: All log files **must begin with a YAML frontmatter block** (see 5.3), otherwise they do not conform to the file specification.
 
 2. **Before writing, always run** `date "+%Y-%m-%d %H:%M:%S"` to obtain the real timestamp. Hardcoding or guessing timestamps is strictly prohibited.
 
