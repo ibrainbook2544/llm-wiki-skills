@@ -7,7 +7,7 @@
 
 ### 1.1 Use `obsidian-cli` skill for vault operations.
 
-1. All file operations inside the vault MUST be performed via the `Obsidian CLI` which is Obsidian built-in functions. Only if the CLI cannot accomplish the task should you fall back to `Read` / `Write` / `Edit` / `Glob` / `Grep` or other tools. 
+1. All file operations inside the vault MUST be performed via the `Obsidian CLI` which is Obsidian built-in functions. Only if the CLI cannot accomplish the task should you fall back to `Shell Command` tools. 
 
 2. This restriction does NOT apply to paths outside the vault.
 
@@ -27,6 +27,7 @@ For any classification decision, cross-file changes, new file creation, an exist
 
 ```
 vault-root/
+├── asset/                # Attachments (mirrors raw/ or /wiki structure)
 ├── raw/                  # Raw source materials (read-only)
 ├── wiki/
 │   ├── index.md          # Master table of contents (maintained across all sections)
@@ -39,13 +40,19 @@ vault-root/
 └── CLAUDE.md             # This file
 ```
 
-### 2.1 Directory Notes
+### 2.1 Directory Rules
 
 1. `raw/` may contain multiple sub-levels (subdirectories, subfolders) for organization.
 
-2. `wiki/sources/` mirrors the path structure of `raw/` exactly (EXCEPT FOR all `attachment folders`): `raw/FOLDER/FILE.docx` → `wiki/sources/FOLDER/FILE.md`
+2. `wiki/sources/` mirrors the path structure of `raw/` exactly: `raw/FOLDER/FILE.docx` → `wiki/sources/FOLDER/FILE.md`
 
-3. All attachments referenced in `raw/` and `wiki/` files are located exclusively `attachment folders` in `raw/` directory.
+### 2.2 `asset/` and Attachments
+
+1. All attachments referenced in `raw/` and `wiki/` files are ONLY located in `asset/` directory and mirror `raw/` structure, e.g.:
+
+   - A pic in `raw/FOLDER/FILE.docx` will be saved in `asset/raw/FOLDER/<FILENAME as folder>/1.png`
+
+2. All references to attachments use the `wiki-link` format.
 
 ---
 
@@ -66,39 +73,49 @@ When a user message **starts with** one of the following keywords, treat it as a
 
 2. Separate multiple files with spaces: `ingest FILE.docx FOLDER/FILE.docx FOLDER/SUBFOLDER/FILE.docx`
 
-3. **No-argument auto-scan** (ONLY `ingest`): Recursively scan `raw/` directory and all its subdirectories, excluding all attachment directories. Compares against `wiki/sources/` and lists unprocessed files.
+3. **No-argument auto-scan** (ONLY `ingest`): Recursively scan `raw/` directory and all its subdirectories. Compares against `wiki/sources/` and lists unprocessed files.
 
 ---
 
 ## 4. Command Workflows
 
-When a command workflow is completed, write a log entry by appending to `wiki/logs/log-YYYY-MM-DD.md` (see 5.5).
+When a command workflow is completed, write a log entry by appending to `wiki/logs/log-YYYY-MM-DD.md` (see 5.1.2).
 
 ### 4.1 `ingest` - Ingest
 
 1. According to `Path Rules`, ingest each file.
+
 2. Co-read confirmation: Read the source in full, then confirm core takeaways with the user via Q&A.
-3. Create or update the sources file at path `wiki/sources/<same relative path as raw>/<original filename>.md`:
 
-   - Content includes: summary, reference to original, knowledge map (tree outline), key points, attachments, and related links. 
+3. When file is not markdown format, such as `docx`, `PDF`, or others, automatically to convert into markdown file: `raw/PATH/FILE.docx` to `raw/PATH/FILE.md`.
 
-4. Update `index.md`: Append a line in the `Sources` section.
-5. Update `concepts/` and `entities/`: 
+4. All attachments MUST follow Directory Rules (see 2.2).
 
-   - Create or update relevant concept and entiy files.
-   - Add `Relevant Links` and attach the reasons for their association: [[wiki/concepts/demo]] - One-sentence reason
+5. Create or update the sources file at path `wiki/sources/<same relative path as raw>/<original filename>.md` (see 5.2.1).
+
+6. Update `index.md`: Append a line in the `Sources` section.
+
+7. Update `concepts/` (see 5.2.2).
+
+8. Update `entities/` (see 5.2.2).
 
 ### 4.2 `query` - Query
 
 1. **FIRST**, read `wiki/index.md` to locate relevant files.
+
 2. Read those files in depth.
+
 3. Find the 10 oldest log files in the `wiki/logs/` directory.
+
 4. Synthesize a response, **citing all references using wiki-link format**.
+
 5. Finally, after consulting the user and obtaining confirmation, save the result to the outputs directory: `outputs/query-result-YYYY-MM-DD.md`
 
 ### 4.3 `lint` - Health Check
 
-1. Check each item below and output a report (**list suggestions only - do not auto-fix**):
+1. **Exclude** the directories and files outside of the wiki system (see 2).
+
+2. Check each item below and output a report (**list suggestions only - do not auto-fix**):
 
    - Factual contradictions between files
    - Orphaned files (no incoming backlinks, such as modification or deletion)
@@ -107,9 +124,11 @@ When a command workflow is completed, write a log entry by appending to `wiki/lo
    - Incomplete or invalid frontmatter
    - Source link in frontmatter's sources has wrong format or dead link
 
-2. End the report with recommended directions for additional source material.
-3. Save the report to the outputs directory: `outputs/lint-report-YYYY-MM-DD.md`
-4. Finally, update the index file.
+3. End the report with recommended directions for additional source material.
+
+4. Save the report to the outputs directory: `outputs/lint-report-YYYY-MM-DD.md`
+
+5. Finally, update the index file.
 
 ### 4.4 `init` - Initialize
 
@@ -119,33 +138,9 @@ Launch `llm-wiki-init` skill.
 
 ## 5. File Specifications
 
-### 5.1 `Wiki Files`: files in `sources/`, `entities/`, `concepts/`, `outputs/`
+### 5.1 `Operational Files`: index, logs, CLAUDE, AGENTS
 
-### 5.2 `Operational Files`: index, CLAUDE, AGENTS and logs 
-
-### 5.3 Wiki File Format
-
-1. Every `Wiki Files` must begin with a YAML frontmatter block.
-
-2. Frontmatter format:
-
-```yaml
----
-type: source              # source | entity | concept | output
-origin: agent-compiled    # self-written | agent-compiled
-summary: One-sentence summary of this file   # ONLY for source | entity | concept
-tags: [tag1, tag2, ...]
-date: 2025-01-15          # Creation or last-updated date, YYYY-MM-DD
-sources: ["[[wikilinks]]"]   # source links
----
-```
-
-**source link** is Obsidian Internal link referenced a raw source file, relative to `raw/`
-
-  - When updating an existing `Wiki File`, the `sources` field must be appended synchronously. 
-  - When the referenced raw source is a `docx` or `PDF` file, the source should be its corresponding `.md` file, not a `.docx` or `PDF` file with the same name.
-
-### 5.4 `index.md` Format
+#### 5.1.1 `index.md`
 
 This is the master table of contents - every wiki file should eventually appear here.
 
@@ -173,9 +168,9 @@ This is the master table of contents - every wiki file should eventually appear 
 - Maximum 10 keywords per entry, **sorted by descending weight/relevance in the content**.
 - `Operational Files` excluded from indexing (to suppress future isolation warnings).
 
-### 5.5 Log File Format
+#### 5.1.2 Log File
 
-1. **Critical**: All log files **must begin with a YAML frontmatter block** (see 5.3), otherwise they do not conform to the file specification.
+1. **Critical**: All log files **must begin with a YAML frontmatter block** (see 5.2.2), otherwise they do not conform to the file specification.
 
 2. **Before writing, always run** `date "+%Y-%m-%d %H:%M:%S"` to obtain the real timestamp. Hardcoding or guessing timestamps is strictly prohibited.
 
@@ -200,9 +195,56 @@ This is the master table of contents - every wiki file should eventually appear 
   ---
   ```
 
-### 5.6 `docx`, `PDF`
+### 5.2 `Wiki Files`
 
-1. AI automatically to convert: `raw/PATH/FILE.docx` to `raw/PATH/FILE.md`. After conversion, check if the attachments are broken links. If so, try to fix it.
-2. Save attachments in a sibling subdirectory and use the filename (prefix only, excluding the extension) as the directory name. 
-  - `raw/PATH/FILE/1.png`
-3. ALL `Wiki Files` MUST reference the attachments in the `raw/` directory; do not create new attachment directories or files.
+#### 5.2.1 files in `sources/`
+
+1. knowledge map (tree outline)
+
+2. summary
+
+3. Generate a clear, well-structured, and easy-to-read Markdown outline document based on the original material. Keep the content concise and the language precise, while preserving all knowledge points, pictures, images and their logical relationships. Ensure that no key points or details are omitted.
+
+4. Add attachments at appropriate locations based on the context of the original source material.
+
+#### 5.2.2 files in `entities/`, `concepts/`, `outputs/`
+
+1. knowledge map (tree outline)
+
+2. summary
+
+3. key points
+
+#### 5.2.3 Wiki File Frontmatter
+
+1. Every `Wiki Files` must begin with a YAML frontmatter block.
+
+2. Frontmatter format:
+
+```yaml
+---
+type: source              # source | entity | concept | output
+origin: agent-compiled    # self-written | agent-compiled
+summary: One-sentence summary of this file   # ONLY for source | entity | concept
+tags: [tag1, tag2, ...]
+date: 2025-01-15          # Creation or last-updated date, YYYY-MM-DD
+sources: ["[[wikilinks]]"]   # source links
+---
+```
+
+**source link** is Obsidian Internal link referenced a raw source file, relative to `raw/`
+
+  - When updating an existing `Wiki File`, the `sources` field must be appended synchronously if it not exsits. 
+  - When the referenced raw source is a `docx` or `PDF` file, the source should be its corresponding `.md` file, not a `.docx` or `PDF` file with the same filename.
+
+#### 5.2.4 Wiki File Relevant Links
+
+1. Every `Wiki Files` must end with `Relevant Links` block.
+
+2. `Relevant Links` MUST attach the reasons for their association: 
+
+```markdown
+---
+- [[wiki/entities/DEMO]] - One-sentence reason
+---
+```

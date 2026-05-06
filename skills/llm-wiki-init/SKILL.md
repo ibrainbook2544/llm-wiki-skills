@@ -33,10 +33,6 @@ Check whether `CLAUDE.md`, `AGENTS.md`, `wiki/`, or `raw/` already exist:
 Use today's date (from `currentDate` in context) for the `date` field.
 
 ```markdown
----
-date: YYYY-MM-DD
----
-
 # Wiki Index
 
 > All files are maintained by type. Each line is formatted as: `[[wikilink]] - One-sentence summary`
@@ -63,7 +59,7 @@ date: YYYY-MM-DD
 
 ## Outputs
 
-(Output file: Overview, Comparison Table, Analysis)
+(Output file: Overview, Comparison Table, Analysis, Reports, Results)
 
 ---
 ```
