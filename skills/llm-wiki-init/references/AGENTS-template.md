@@ -52,7 +52,7 @@ vault-root/
 
    - A pic in `raw/FOLDER/FILE.docx` will be saved in `asset/raw/FOLDER/<FILENAME as folder>/1.png`
 
-2. All references to attachments use the `wiki-link` format.
+2. All references to attachments use the `Wiki-link` format.
 
 ---
 
@@ -73,7 +73,10 @@ When a user message **starts with** one of the following keywords, treat it as a
 
 2. Separate multiple files with spaces: `ingest FILE.docx FOLDER/FILE.docx FOLDER/SUBFOLDER/FILE.docx`
 
-3. **No-argument auto-scan** (ONLY `ingest`): Recursively scan `raw/` directory and all its subdirectories. Compares against `wiki/sources/` and lists unprocessed files.
+3. **No-argument auto-scan** (ONLY `ingest`): 
+
+   - Recursively scan `raw/` directory and all its subdirectories.
+   - Find all unprocessed files by comparing with `wiki/sources/`.
 
 ---
 
@@ -87,7 +90,7 @@ When a command workflow is completed, write a log entry by appending to `wiki/lo
 
 2. Co-read confirmation: Read the source in full, then confirm core takeaways with the user via Q&A.
 
-3. When file is not markdown format, such as `docx`, `PDF`, or others, automatically to convert into markdown file: `raw/PATH/FILE.docx` to `raw/PATH/FILE.md`.
+3. When file is not markdown format, such as `docx`, `PDF`, or others, automatically to convert into markdown file in the SAME directory: `raw/PATH/FILE.docx` to `raw/PATH/FILE.md`.
 
 4. All attachments MUST follow Directory Rules (see 2.2).
 
@@ -107,7 +110,7 @@ When a command workflow is completed, write a log entry by appending to `wiki/lo
 
 3. Find the 10 oldest log files in the `wiki/logs/` directory.
 
-4. Synthesize a response, **citing all references using wiki-link format**.
+4. Synthesize a response, **citing all references using `Wiki-link` format**.
 
 5. Finally, after consulting the user and obtaining confirmation, save the result to the outputs directory: `outputs/query-result-YYYY-MM-DD.md`
 
@@ -228,14 +231,16 @@ origin: agent-compiled    # self-written | agent-compiled
 summary: One-sentence summary of this file   # ONLY for source | entity | concept
 tags: [tag1, tag2, ...]
 date: 2025-01-15          # Creation or last-updated date, YYYY-MM-DD
-sources: ["[[wikilinks]]"]   # source links
+sources:                  # Source links
+  - "[[raw/FILE.md]]"
+  - "[[wiki/sources/FILE]]"
 ---
 ```
 
-**source link** is Obsidian Internal link referenced a raw source file, relative to `raw/`
+**Source link** is Obsidian Internal `Wiki-link` referenced a raw source file, relative to `raw/`
 
   - When updating an existing `Wiki File`, the `sources` field must be appended synchronously if it not exsits. 
-  - When the referenced raw source is a `docx` or `PDF` file, the source should be its corresponding `.md` file, not a `.docx` or `PDF` file with the same filename.
+  - When the referenced raw source is a `docx` or `PDF` file, the source should be its corresponding `.md` file, not `.docx` or `PDF` file with the same filename.
 
 #### 5.2.4 Wiki File Relevant Links
 
