@@ -8,7 +8,7 @@ This skill sets up a complete LLM-driven wiki in the current working directory (
 
 ## Requirement: 
 
-Check whether Obsidian CLI has installed and can work normally. If not, you will be required to install it before continuing.
+Check whether `Obsidian CLI has installed and can work normally. If not, you will be required to install it before continuing.
 
 ## Step 1: Check existing state
 
@@ -29,8 +29,6 @@ Check whether `CLAUDE.md`, `AGENTS.md`, `wiki/`, or `raw/` already exist:
 - `wiki/logs/`
 
 ## Step 3: Create wiki/index.md
-
-Use today's date (from `currentDate` in context) for the `date` field.
 
 ```markdown
 # Wiki Index
