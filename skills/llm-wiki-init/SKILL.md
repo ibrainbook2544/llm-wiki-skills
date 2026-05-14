@@ -21,12 +21,13 @@ Check whether `CLAUDE.md`, `AGENTS.md`, `wiki/`, or `raw/` already exist:
 
 ## Step 2: Create directory structure
 
-- `asset/`
-- `raw/`
-- `wiki/concepts/`
-- `wiki/entities/`
-- `wiki/sources/`
-- `wiki/outputs/`
+- `asset/
+- `raw/
+- `wiki/synthesis/
+- `wiki/concepts/
+- `wiki/entities/
+- `wiki/sources/
+- `wiki/outputs/
 - `logs/`
 
 ## Step 3: Create wiki/index.md
@@ -41,6 +42,12 @@ Check whether `CLAUDE.md`, `AGENTS.md`, `wiki/`, or `raw/` already exist:
 ## Outputs
 
 (Output file: Query Results, Comparison Table, Analysis, Reports, etc.)
+
+---
+
+## Synthesis
+
+(Synthesis file: Composite analyses that combine related information from multiple sources, entities, and concepts.)
 
 ---
 

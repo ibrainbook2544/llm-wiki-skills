@@ -33,8 +33,9 @@ vault-root/
 ├── wiki/
 │   ├── index.md          # Master table of contents
 │   ├── sources/          # Study notes for each raw source
-│   ├── concepts/         # Concept files
 │   ├── entities/         # Entity files
+│   ├── concepts/         # Concept files
+│   ├── synthesis/        # Synthesis files
 │   └── outputs/          # Output filess
 ├── AGENTS.md             # This file
 └── CLAUDE.md             # Same content as this fileThis file
@@ -96,9 +97,11 @@ When a user message **starts with** one of the following keywords, treat it as a
 
 6. Update `index.md` (see 5.1).
 
-7. Update `concepts/` (see 5.3).
+7. Update `synthesis/` (see 5.3).
 
-8. Update `entities/` (see 5.3).
+8. Update `concepts/` (see 5.3).
+
+9. Update `entities/` (see 5.3).
 
 ### 4.2 `query` - Query
 
@@ -119,7 +122,7 @@ When a user message **starts with** one of the following keywords, treat it as a
    - All dead links
    - Factual contradictions between files
    - Orphaned files (no incoming backlinks, such as modification or deletion)
-   - Concepts or entities mentioned but without a dedicated file (maybe modified or deleted)
+   - Synthesis, Concepts or entities mentioned but without a dedicated file (maybe modified or deleted)
    - Content that is now outdated due to newer source material
    - Incomplete or invalid frontmatter
    - Source link in frontmatter's sources has wrong format or dead link
@@ -144,7 +147,7 @@ This is the master table of contents - every `Wiki Files` wiki file should event
 
 2. Maintain four sections:
 
-   - Section Order - Now follows spec: Outputs → Concepts → Entities → Sources
+   - Section Order - Now follows spec: Outputs → Synthesis → Concepts → Entities → Sources
    - Alphabetical Sorting - Each section sorted by directory then filename
    - Keyword Format - Added keywords in brackets, sorted by relevance (max 10 per entry)
    - Cleaner Format - Summary line with relevant keywords
@@ -153,9 +156,11 @@ This is the master table of contents - every `Wiki Files` wiki file should event
 ## Outputs
 - [[wiki/outputs/llm-comparison]] - summary [keywords]
 
+## Synthesis
+- [[wiki/synthesis/llm-analysis]] - summary [keywords]
+
 ## Concepts
 - [[wiki/concepts/attention]] - summary [keywords]
-
 
 ## Entities
 - [[wiki/entities/openai]] - summary [keywords]
@@ -175,7 +180,7 @@ This is the master table of contents - every `Wiki Files` wiki file should event
 
 4. Add attachments at appropriate locations based on the context of the original source material.
 
-### 5.3 files in `entities/`, `concepts/`, `outputs/`
+### 5.3 files in `entities/`, `concepts/`, `synthesis/`, `outputs/`
 
 1. knowledge map (tree outline)
 
@@ -193,9 +198,9 @@ This is the master table of contents - every `Wiki Files` wiki file should event
 
 ```yaml
 ---
-type: source              # source | entity | concept | output
+type: source              # source | entity | concept | synthesis | output
 origin: agent-compiled    # self-written | agent-compiled
-summary: One-sentence summary of this file   # ONLY for source | entity | concept
+summary: One-sentence summary of this file
 tags: [tag1, tag2, ...]
 sources:                  # Source links
   - "[[raw/FILE.md]]"
