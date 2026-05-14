@@ -27,17 +27,17 @@ For any classification decision, cross-file changes, new file creation, an exist
 
 ```
 vault-root/
-├── asset/                # Attachments (mirrors raw/ or /wiki structure)
-├── raw/                  # Raw source materials (read-only)
+├── logs/
+├── asset/                # Attachments
+├── raw/                  # Raw source materials
 ├── wiki/
-│   ├── index.md          # Master table of contents (maintained across all sections)
-│   ├── sources/          # Study notes for each raw source (mirrors raw/ structure)
-│   ├── concepts/         # Concept files (one file per important concept)
-│   ├── entities/         # Entity files (people, projects, companies, tools, etc.)
-│   ├── outputs/          # Query outputs (surveys, comparison tables, analyses, etc.)
-│   └── logs/             # Operation logs (one file per day, by date)
-├── AGENTS.md             # Same content as this file
-└── CLAUDE.md             # This file
+│   ├── index.md          # Master table of contents
+│   ├── sources/          # Study notes for each raw source
+│   ├── concepts/         # Concept files
+│   ├── entities/         # Entity files
+│   └── outputs/          # Output filess
+├── AGENTS.md             # This file
+└── CLAUDE.md             # Same content as this fileThis file
 ```
 
 ### 2.1 Directory Rules
@@ -82,8 +82,6 @@ When a user message **starts with** one of the following keywords, treat it as a
 
 ## 4. Command Workflows
 
-When a command workflow is completed, write a log entry by appending to `wiki/logs/log-YYYY-MM-DD.md` (see 5.1.2).
-
 ### 4.1 `ingest` - Ingest
 
 1. According to `Path Rules`, ingest each file.
@@ -94,13 +92,13 @@ When a command workflow is completed, write a log entry by appending to `wiki/lo
 
 4. All attachments MUST follow Directory Rules (see 2.2).
 
-5. Create or update the sources file at path `wiki/sources/<same relative path as raw>/<original filename>.md` (see 5.2.1).
+5. Create or update the sources file at path `wiki/sources/<same relative path as raw>/<original filename>.md` (see 5.2).
 
-6. Update `index.md`: Append a line in the `Sources` section.
+6. Update `index.md` (see 5.1).
 
-7. Update `concepts/` (see 5.2.2).
+7. Update `concepts/` (see 5.3).
 
-8. Update `entities/` (see 5.2.2).
+8. Update `entities/` (see 5.3).
 
 ### 4.2 `query` - Query
 
@@ -108,18 +106,17 @@ When a command workflow is completed, write a log entry by appending to `wiki/lo
 
 2. Read those files in depth.
 
-3. Find the 10 oldest log files in the `wiki/logs/` directory.
+3. Synthesize a response, **citing all references using `Wiki-link` format**.
 
-4. Synthesize a response, **citing all references using `Wiki-link` format**.
-
-5. Finally, after consulting the user and obtaining confirmation, save the result to the outputs directory: `outputs/query-result-YYYY-MM-DD.md`
+4. Finally, after consulting the user and obtaining confirmation, save the result to the `outputs/` directory: `outputs/query-result-YYYY-MM-DD.md` (see 5.3).
 
 ### 4.3 `lint` - Health Check
 
-1. **Exclude** the directories and files outside of the wiki system (see 2).
+1. **Exclude** the directories and files outside of the `wiki/` (see 2).
 
 2. Check each item below and output a report (**list suggestions only - do not auto-fix**):
 
+   - All dead links
    - Factual contradictions between files
    - Orphaned files (no incoming backlinks, such as modification or deletion)
    - Concepts or entities mentioned but without a dedicated file (maybe modified or deleted)
@@ -129,9 +126,7 @@ When a command workflow is completed, write a log entry by appending to `wiki/lo
 
 3. End the report with recommended directions for additional source material.
 
-4. Save the report to the outputs directory: `outputs/lint-report-YYYY-MM-DD.md`
-
-5. Finally, update the index file.
+4. Save the report to the outputs directory: `logs/lint-YYYY-MM-DD.md`
 
 ### 4.4 `init` - Initialize
 
@@ -139,21 +134,24 @@ Launch `llm-wiki-init` skill.
 
 ---
 
-## 5. File Specifications
+## 5. `Wiki Files`
 
-### 5.1 `Operational Files`: index, logs, CLAUDE, AGENTS
+### 5.1 `index.md`
 
-#### 5.1.1 `index.md`
-
-This is the master table of contents - every wiki file should eventually appear here.
+This is the master table of contents - every `Wiki Files` wiki file should eventually appear here.
 
 1. `index.md` does NOT require YAML frontmatter.
 
-2. Maintain four sections; within each section, sort by directory then filename (ascending). Each line follows this format:
+2. Maintain four sections:
+
+   - Section Order - Now follows spec: Outputs → Concepts → Entities → Sources
+   - Alphabetical Sorting - Each section sorted by directory then filename
+   - Keyword Format - Added keywords in brackets, sorted by relevance (max 10 per entry)
+   - Cleaner Format - Summary line with relevant keywords
 
 ```markdown
-## Sources
-- [[wiki/sources/AI/transformer]] - summary [keywords]
+## Outputs
+- [[wiki/outputs/llm-comparison]] - summary [keywords]
 
 ## Concepts
 - [[wiki/concepts/attention]] - summary [keywords]
@@ -162,45 +160,12 @@ This is the master table of contents - every wiki file should eventually appear 
 ## Entities
 - [[wiki/entities/openai]] - summary [keywords]
 
-## Outputs
-- [[wiki/outputs/llm-comparison]] - summary [keywords]
+## Sources
+- [[wiki/sources/AI/transformer]] - summary [keywords]
+
 ```
 
-3. Rules:
-
-- Maximum 10 keywords per entry, **sorted by descending weight/relevance in the content**.
-- `Operational Files` excluded from indexing (to suppress future isolation warnings).
-
-#### 5.1.2 Log File
-
-1. **Critical**: All log files **must begin with a YAML frontmatter block** (see 5.2.2), otherwise they do not conform to the file specification.
-
-2. **Before writing, always run** `date "+%Y-%m-%d %H:%M:%S"` to obtain the real timestamp. Hardcoding or guessing timestamps is strictly prohibited.
-
-3. **ONLY** Log files record execution summaries of **structured commands**.
-
-4. **Append** an entry to the log file.
-
-- File path: `wiki/logs/log-YYYY-MM-DD.md` (one file per day)
-- Format:
-
-  ```markdown
-  ---
-  type: log
-  origin: agent-compiled
-  tags: [command1, command2, ...]
-  date: YYYY-MM-DD
-  ---
-
-  ## [YYYY-MM-DD HH:mm:ss] <command> | <one-line description>
-  <bullet summary list>
-
-  ---
-  ```
-
-### 5.2 `Wiki Files`
-
-#### 5.2.1 files in `sources/`
+### 5.2 files in `sources/`
 
 1. knowledge map (tree outline)
 
@@ -210,7 +175,7 @@ This is the master table of contents - every wiki file should eventually appear 
 
 4. Add attachments at appropriate locations based on the context of the original source material.
 
-#### 5.2.2 files in `entities/`, `concepts/`, `outputs/`
+### 5.3 files in `entities/`, `concepts/`, `outputs/`
 
 1. knowledge map (tree outline)
 
@@ -218,7 +183,9 @@ This is the master table of contents - every wiki file should eventually appear 
 
 3. key points
 
-#### 5.2.3 Wiki File Frontmatter
+## 6. `Wiki Files` Specifications
+
+### 6.1 Wiki File Frontmatter
 
 1. Every `Wiki Files` must begin with a YAML frontmatter block.
 
@@ -230,19 +197,19 @@ type: source              # source | entity | concept | output
 origin: agent-compiled    # self-written | agent-compiled
 summary: One-sentence summary of this file   # ONLY for source | entity | concept
 tags: [tag1, tag2, ...]
-date: 2025-01-15          # Creation or last-updated date, YYYY-MM-DD
 sources:                  # Source links
   - "[[raw/FILE.md]]"
   - "[[wiki/sources/FILE]]"
 ---
 ```
 
-**Source link** is Obsidian Internal `Wiki-link` referenced a raw source file, relative to `raw/`
+**Source link** is Obsidian internal `Wiki-link` 
 
-  - When updating an existing `Wiki File`, the `sources` field must be appended synchronously if it not exsits. 
+  - When files in `sources/`, the `sources` field referenced a raw source file, relative to `raw/`. All other files, the `sources` field referenced a source file in `wiki/sources/`.
   - When the referenced raw source is a `docx` or `PDF` file, the source should be its corresponding `.md` file, not `.docx` or `PDF` file with the same filename.
+  - When updating an existing `Wiki File`, the `sources` field must be appended synchronously if it not exsits. 
 
-#### 5.2.4 Wiki File Relevant Links
+### 6.2 Wiki File Relevant Links
 
 1. Every `Wiki Files` must end with `Relevant Links` block.
 

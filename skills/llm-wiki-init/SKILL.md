@@ -8,7 +8,7 @@ This skill sets up a complete LLM-driven wiki in the current working directory (
 
 ## Requirement: 
 
-Check whether `Obsidian CLI has installed and can work normally. If not, you will be required to install it before continuing.
+Check whether `Obsidian CLI` has installed and can work normally. If not, you will be required to install it before continuing.
 
 ## Step 1: Check existing state
 
@@ -21,12 +21,13 @@ Check whether `CLAUDE.md`, `AGENTS.md`, `wiki/`, or `raw/` already exist:
 
 ## Step 2: Create directory structure
 
+- `asset/`
 - `raw/`
 - `wiki/concepts/`
 - `wiki/entities/`
 - `wiki/sources/`
 - `wiki/outputs/`
-- `wiki/logs/`
+- `logs/`
 
 ## Step 3: Create wiki/index.md
 
@@ -37,27 +38,27 @@ Check whether `CLAUDE.md`, `AGENTS.md`, `wiki/`, or `raw/` already exist:
 
 ---
 
-## Sources
+## Outputs
 
-(Source data summary file)
+(Output file: Query Results, Comparison Table, Analysis, Reports, etc.)
 
 ---
 
 ## Concepts
 
-(Concept file)
+(Concept file: Foundational Concepts, Concept Relationships, Methodologies, Models, Architecture, Patterns, etc.)
 
 ---
 
 ## Entities
 
-(Entity file: People, Projects, Companies, Tools)
+(Entity file: People, Projects, Companies, Tools, etc.)
 
 ---
 
-## Outputs
+## Sources
 
-(Output file: Overview, Comparison Table, Analysis, Reports, Results)
+(Source data summary file)
 
 ---
 ```
