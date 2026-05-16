@@ -111,7 +111,7 @@ When a user message **starts with** one of the following keywords, treat it as a
 
 3. Synthesize a response, **citing all references using `Wiki-link` format**.
 
-4. Finally, after consulting the user and obtaining confirmation, save the result to the `outputs/` directory: `outputs/query-result-YYYY-MM-DD.md` (see 5.3).
+4. Finally, after consulting the user and obtaining confirmation, save the result to the `outputs/` directory: `wiki/outputs/query-result-YYYY-MM-DD.md` (see 5.3).
 
 ### 4.3 `lint` - Health Check
 

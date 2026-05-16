@@ -29,6 +29,93 @@ Bootstraps a brand-new LLM-driven wiki in the current Obsidian vault.
 
 ---
 
+### 2. `llm-wiki-ingest`
+
+Processes and imports raw source material into the wiki structure.
+
+**What it does:**
+- Ingests raw source files from the `raw/` directory
+- Converts non-Markdown files to Markdown when supported
+- Extracts, preserves, or links attachments according to vault rules
+- Creates or updates notes under `wiki/sources/` that mirror the `raw/` structure
+- Coordinates updates to index, concepts, entities, and synthesis files
+
+**Trigger phrases:**
+> "ingest", "ingest file.docx", "import these raw files", "turn this source material into wiki notes", "process the unprocessed files"
+
+**Works best with:** `llm-wiki-format`
+
+---
+
+### 3. `llm-wiki-format`
+
+Maintains consistency, linkability, and maintainability across all wiki files.
+
+**What it does:**
+- Defines and enforces required frontmatter structure (type, origin, summary, tags, sources)
+- Establishes Wiki-link conventions for internal cross-references
+- Specifies the `Relevant Links` block structure
+- Validates `index.md` organization
+- Ensures proper source-reference formatting
+- Manages attachment-link conventions
+
+**Trigger phrases:**
+> Used in combination with other skills (ingest, query, lint) or when directly editing wiki notes
+
+**Allowed frontmatter types:**
+- `source`, `entity`, `concept`, `synthesis`, `output`
+
+**Allowed origin values:**
+- `self-written`, `agent-compiled`
+
+---
+
+### 4. `llm-wiki-lint`
+
+Performs comprehensive health checks on the wiki knowledge base.
+
+**What it does:**
+- Identifies dead Wiki-links and validates references
+- Detects orphaned files with no incoming backlinks
+- Finds mentioned concepts without dedicated concept files
+- Finds mentioned entities without dedicated entity files
+- Detects outdated synthesis notes relative to newer sources
+- Checks for factual contradictions between files
+- Validates frontmatter completeness and correctness
+- Verifies source link integrity and format
+- Ensures all files have `Relevant Links` blocks
+- Validates `wiki/index.md` entries (missing, stale, duplicated, or unsorted)
+
+**Trigger phrases:**
+> "lint", "check the wiki health", "find dead links", "check for orphan files", "validate frontmatter"
+
+**Scope:** Only lints files under `wiki/` (excludes `raw/` and other directories)
+
+---
+
+### 5. `llm-wiki-query`
+
+Answers questions by searching and synthesizing information from the wiki.
+
+**What it does:**
+- Reads `wiki/index.md` to locate relevant files
+- Searches across `wiki/sources/`, `wiki/concepts/`, `wiki/entities/`, and `wiki/synthesis/`
+- Synthesizes comprehensive answers with Wiki-link citations
+- Optionally saves results to `wiki/outputs/` for future reference
+- Follows relevant wikilinks to provide complete context
+
+**Trigger phrases:**
+> "query <topic>", "answer this from my wiki", "summarize what the knowledge base says about...", "search the wiki for...", "based on the wiki, explain..."
+
+**Output format:**
+- All answers include structured evidence section
+- Every claim is cited using Obsidian wikilink format
+- Results can be saved as query output notes
+
+**Works best with:** `llm-wiki-format` (when saving output notes)
+
+---
+
 ## Wiki Workflow (after `init`)
 
 Once the wiki is initialized, AI responds to the following **structured commands**:
@@ -52,6 +139,7 @@ vault-root/
 │   ├── sources/          # Study notes (mirrors raw/ structure)
 │   ├── concepts/         # One file per key concept
 │   ├── entities/         # People, projects, companies, tools, etc.
+│   ├── synthesis/        # Composite analyses combining multiple sources
 │   └── outputs/          # Queries, analyses, comparison tables
 ├── logs/                 # Daily operation logs
 ├── AGENTS.md
@@ -95,10 +183,18 @@ It automatically appends complete conversation records to `logs/YYYY-MM-DD.md` a
 ```
 llm-wiki-skills/
 ├── skills/
-│   └── llm-wiki-init/
-│       ├── SKILL.md                   # Skill definition & workflow steps
-│       └── references/
-│           └── AGENTS-template.md     # Template written as AGENTS.md on init
+│   ├── llm-wiki-init/
+│   │   ├── SKILL.md                   # Initialize new wiki structure
+│   │   └── references/
+│   │       └── AGENTS-template.md     # Template written as AGENTS.md on init
+│   ├── llm-wiki-ingest/
+│   │   └── SKILL.md                   # Import raw source material
+│   ├── llm-wiki-format/
+│   │   └── SKILL.md                   # Format and consistency rules
+│   ├── llm-wiki-lint/
+│   │   └── SKILL.md                   # Health check and validation
+│   └── llm-wiki-query/
+│       └── SKILL.md                   # Query and synthesis
 ├── .gitignore
 ├── .gitattributes
 └── README.md
